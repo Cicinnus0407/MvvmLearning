@@ -31,12 +31,17 @@ public class MainActivity extends AppCompatActivity {
 
         setUpDrawer();
 
-        NewsFragment newsFragment = findOrCreateViewFragment();
+        NewsFragment newsFragment = findOrCreateViewFragment(savedInstanceState);
 
-        NewsViewModel newsViewModel = findOrCreateViewModel();
+//        NewsViewModel newsViewModel = findOrCreateViewModel();
+//        NewsViewModel viewModel = new NewsViewModel(getApplicationContext(),new NewsRepository());
+
+
+//        newsFragment.setNewsViewModel(viewModel);
 
     }
 
+    //创建或者获取缓存的ViewModel
     private NewsViewModel findOrCreateViewModel() {
         @SuppressWarnings("unchecked")
         ViewModelHolder<NewsViewModel> retainedViewModel =
@@ -57,15 +62,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private NewsFragment findOrCreateViewFragment() {
-        NewsFragment newsFragment = (NewsFragment) getSupportFragmentManager().findFragmentById(R.id.fl_content);
-
-        if (newsFragment == null) {
+    //创建或者获取缓存的Fragment
+    private NewsFragment findOrCreateViewFragment(Bundle savedInstanceState) {
+        NewsFragment newsFragment;
+        if (savedInstanceState == null) {
             //添加Fragment到FrameLayout
             newsFragment = NewsFragment.newInstance();
-            android.support.v4.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+           FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.add(R.id.fl_content, newsFragment);
             transaction.commit();
+        }else {
+             newsFragment = (NewsFragment) getSupportFragmentManager().findFragmentById(R.id.fl_content);
         }
         return newsFragment;
     }

@@ -17,4 +17,5 @@ public interface BaseDataSource<T> {
     }
 
     void getData(LoadDataCallBack<T> callBack);
+
 }

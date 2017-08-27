@@ -56,9 +56,11 @@ public class NewsBean {
         private int type;
         private int id;
         private String ga_prefix;
+//        public ObservableField<String> title = new ObservableField<>();
         private String title;
         private boolean multipic;
         private List<String> images;
+
 
         public int getType() {
             return type;
@@ -84,13 +86,6 @@ public class NewsBean {
             this.ga_prefix = ga_prefix;
         }
 
-        public String getTitle() {
-            return title;
-        }
-
-        public void setTitle(String title) {
-            this.title = title;
-        }
 
         public boolean isMultipic() {
             return multipic;
@@ -106,6 +101,14 @@ public class NewsBean {
 
         public void setImages(List<String> images) {
             this.images = images;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
         }
     }
 

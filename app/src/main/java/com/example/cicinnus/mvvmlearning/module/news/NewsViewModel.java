@@ -8,6 +8,14 @@ import android.databinding.ObservableList;
 
 import com.example.cicinnus.mvvmlearning.data.BaseDataSource;
 import com.example.cicinnus.mvvmlearning.data.remote.NewsRepository;
+import com.orhanobut.logger.Logger;
+
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Action;
+import io.reactivex.functions.Consumer;
 
 /**
  * 日报列表的ViewModel
@@ -16,8 +24,8 @@ import com.example.cicinnus.mvvmlearning.data.remote.NewsRepository;
 public class NewsViewModel extends BaseObservable {
 
 
-    //数据Bean
-    private ObservableList<NewsBean> newsBeen = new ObservableArrayList<>();
+    //数据和view交互的viewModel
+    public ObservableList<NewsItemViewModel> itemViewModels = new ObservableArrayList<>();
 
     //数据是否加载中
     private ObservableBoolean dataLoading = new ObservableBoolean(false);
@@ -31,6 +39,10 @@ public class NewsViewModel extends BaseObservable {
         this.repository = repository;
     }
 
+    public void start(){
+        loadNews(true);
+    }
+
 
     public void loadNews(boolean showLoadingUI) {
         if (showLoadingUI) {
@@ -40,12 +52,29 @@ public class NewsViewModel extends BaseObservable {
         repository.getData(new BaseDataSource.LoadDataCallBack<NewsBean>() {
             @Override
             public void onDataLoaded(NewsBean newsBean) {
-                newsBeen.add(newsBean);
+                Observable.fromIterable(newsBean.getStories())
+                        .delay(2, TimeUnit.SECONDS, AndroidSchedulers.mainThread())
+                        .subscribe(new Consumer<NewsBean.StoriesBean>() {
+                            @Override
+                            public void accept(NewsBean.StoriesBean storiesBean) throws Exception {
+                                itemViewModels.add(new NewsItemViewModel(mContext, storiesBean));
+                            }
+                        }, new Consumer<Throwable>() {
+                            @Override
+                            public void accept(Throwable throwable) throws Exception {
+                                Logger.e(throwable.getMessage());
+                            }
+                        }, new Action() {
+                            @Override
+                            public void run() throws Exception {
+                            }
+                        });
             }
 
             @Override
             public void onDataLoadFail(Throwable t) {
                 dataLoading.set(false);
+                Logger.e(t.getMessage());
             }
 
             @Override
