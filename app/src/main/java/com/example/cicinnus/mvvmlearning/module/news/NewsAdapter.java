@@ -1,30 +1,55 @@
 package com.example.cicinnus.mvvmlearning.module.news;
 
-import android.support.annotation.Nullable;
+import android.databinding.DataBindingUtil;
+import android.databinding.ViewDataBinding;
+import android.view.View;
+import android.view.ViewGroup;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
+import com.example.cicinnus.mvvmlearning.BR;
 import com.example.cicinnus.mvvmlearning.R;
-import com.example.cicinnus.mvvmlearning.base.BaseDataBindingAdapter;
-import com.example.cicinnus.mvvmlearning.databinding.ItemNewsBinding;
-
-import java.util.List;
 
 /**
  * Created by cicinnus on 17-8-23.
  */
 
-public class NewsAdapter extends BaseDataBindingAdapter<NewsItemViewModel,ItemNewsBinding> {
+public class NewsAdapter extends BaseQuickAdapter<NewsItemViewModel,NewsAdapter.NewsViewHolder> {
 
 
-    public NewsAdapter(@Nullable List<NewsItemViewModel> data) {
-        super(R.layout.item_news,data);
+    public NewsAdapter() {
+        super(R.layout.item_news,null);
+    }
+
+
+    @Override
+    protected View getItemView(int layoutResId, ViewGroup parent) {
+        ViewDataBinding binding = DataBindingUtil.inflate(mLayoutInflater, layoutResId, parent, false);
+        if (binding == null) {
+            return super.getItemView(layoutResId, parent);
+        }
+        View view = binding.getRoot();
+        view.setTag(R.id.BaseQuickAdapter_databinding_support, binding);
+        return view;
     }
 
     @Override
-    protected void convert(ItemNewsBinding binding, NewsItemViewModel item) {
-
-        binding.setItemViewModel(item);
+    protected void convert(NewsViewHolder helper, NewsItemViewModel item) {
+        ViewDataBinding binding = helper.getBinding();
+        binding.setVariable(BR.itemViewModel, item);
+        binding.executePendingBindings();
     }
 
 
+    public static class NewsViewHolder extends BaseViewHolder {
+
+        public NewsViewHolder(View view) {
+            super(view);
+        }
+
+        public ViewDataBinding getBinding() {
+            return (ViewDataBinding) itemView.getTag(R.id.BaseQuickAdapter_databinding_support);
+        }
+    }
 
 }

@@ -33,11 +33,11 @@ public class MainActivity extends AppCompatActivity {
 
         NewsFragment newsFragment = findOrCreateViewFragment(savedInstanceState);
 
-//        NewsViewModel newsViewModel = findOrCreateViewModel();
+        NewsViewModel newsViewModel = findOrCreateViewModel();
 //        NewsViewModel viewModel = new NewsViewModel(getApplicationContext(),new NewsRepository());
 
 
-//        newsFragment.setNewsViewModel(viewModel);
+        newsFragment.setNewsViewModel(newsViewModel);
 
     }
 

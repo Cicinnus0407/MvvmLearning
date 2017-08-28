@@ -1,13 +1,14 @@
 package com.example.cicinnus.mvvmlearning.module.news;
 
 import android.content.Context;
+import android.databinding.BaseObservable;
 import android.databinding.ObservableField;
 
 /**
  * Created by cicinnus on 17-8-22.
  */
 
-public class NewsItemViewModel {
+public class NewsItemViewModel extends BaseObservable{
 
     private Context mContext;
 

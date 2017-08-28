@@ -1,6 +1,8 @@
 package com.example.cicinnus.mvvmlearning.module.news;
 
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,8 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.cicinnus.mvvmlearning.R;
 import com.example.cicinnus.mvvmlearning.app.MvvmLearningApp;
-import com.example.cicinnus.mvvmlearning.data.remote.NewsRepository;
 import com.example.cicinnus.mvvmlearning.databinding.FragmentNewsBinding;
 
 /**
@@ -22,7 +24,7 @@ public class NewsFragment extends Fragment {
 
     private NewsViewModel newsViewModel;
     private FragmentNewsBinding fragmentNewsBinding;
-    private User user;
+    private NewsAdapter newsAdapter;
 
 
     public static NewsFragment newInstance() {
@@ -33,14 +35,10 @@ public class NewsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        fragmentNewsBinding = FragmentNewsBinding.inflate(inflater, container, false);
-        newsViewModel = new NewsViewModel(MvvmLearningApp.getAppContext(), new NewsRepository());
-        fragmentNewsBinding.setViewModel(newsViewModel);
-        user = new User("什么辣鸡", 12);
-//        fragmentNewsBinding.setUser(user);
+        fragmentNewsBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_news,container,false);
+//        newsViewModel = new NewsViewModel(MvvmLearningApp.getAppContext(), new NewsRepository());
         newsViewModel.start();
-
-        setUpListAdapter();
+        fragmentNewsBinding.setViewModel(newsViewModel);
 
         return fragmentNewsBinding.getRoot();
     }
@@ -48,13 +46,21 @@ public class NewsFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        setUpListAdapter();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                newsAdapter.getData();
+            }
+        },2000);
+
 
     }
 
     private void setUpListAdapter() {
         RecyclerView rvNews = fragmentNewsBinding.rvNews;
         rvNews.setLayoutManager(new LinearLayoutManager(MvvmLearningApp.getAppContext()));
-        NewsAdapter newsAdapter = new NewsAdapter(newsViewModel.itemViewModels);
+        newsAdapter = new NewsAdapter();
         rvNews.setAdapter(newsAdapter);
     }
 
